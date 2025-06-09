@@ -1,218 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Johnstone Info Carousel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Johnstone Info Rotator</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-    }
     body {
-      background: #fff;
-      padding: 2rem;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .container {
       display: flex;
-      max-width: 1100px;
-      margin: 0 auto;
+      height: 100vh;
+      background: #f0f0f0;
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid #ddd;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     .sidebar {
-      width: 250px;
-      background: #f5f5f5;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
+      width: 260px;
+      background: #fff;
+      padding: 20px 10px;
+      border-right: 1px solid #ddd;
     }
-    .sidebar-item {
-      padding: 10px;
+    .nav-item {
+      padding: 12px 16px;
       margin-bottom: 10px;
-      cursor: pointer;
       border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
     }
-    .sidebar-item.active {
-      background: #004990;
-      color: #fff;
+    .nav-item.active {
+      background-color: #004990;
+      color: white;
     }
-    .sidebar-subtext {
-      font-size: 0.85rem;
-      color: #555;
+    .nav-item.active .subtext {
+      color: white;
+    }
+    .nav-item:hover {
+      background-color: #e6f0fb;
+    }
+    .nav-item .title {
+      font-weight: bold;
+    }
+    .nav-item .subtext {
+      font-size: 13px;
+      color: #666;
     }
     .content {
       flex: 1;
-      padding: 2rem;
-      background: linear-gradient(to right, #003366, #004990);
+      padding: 40px;
+      background: linear-gradient(to bottom right, #004990, #003366);
       color: white;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .content.active {
+      opacity: 1;
+      transform: translateX(0);
     }
     .text-section {
-      flex: 1;
-      padding-right: 2rem;
+      max-width: 60%;
     }
     .text-section h2 {
-      margin-bottom: 1rem;
+      margin-top: 0;
     }
     .text-section p {
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
     }
-    .text-section a {
-      padding: 0.5rem 1.2rem;
-      border-radius: 25px;
+    .button {
       background: white;
       color: #004990;
+      padding: 10px 20px;
+      border-radius: 20px;
       text-decoration: none;
       font-weight: bold;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: inline-block;
+    }
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     .image-section img {
-      width: 200px;
-      border-radius: 8px;
+      max-width: 300px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="sidebar" id="sidebar">
-    <!-- Sidebar populated dynamically -->
+  <div class="container">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content"></div>
   </div>
-  <div class="content" id="content">
-    <!-- Main content populated dynamically -->
-  </div>
-</div>
 
-<script>
-  const sections = [
-    {
-      title: "Promotions",
-      subtext: "See our monthly promotions",
-      bigTitle: "Promotions",
-      body: "Want to see what we have on sale for the month? Click the button below to join contests, giveaways, and see what Johnstone Supply has in store!",
-      buttonText: "See Promotions",
-      link: "https://www.johnstonesupply.com/promotions",
-      image: "PROMOTIONS_IMAGE_URL"
-    },
-    {
-      title: "Authorized Buyers",
-      subtext: "Keep your account secure",
-      bigTitle: "Update Your Authorized Buyers",
-      body: "Making an authorized buyers list ensures that when a purchase is made, it's made by a trusted team member. Click this button to update your list.",
-      buttonText: "Visit Page",
-      link: "https://www.johnstonesupply.com/store652/authorized-buyers-page",
-      image: "AUTHORIZED_BUYERS_IMAGE_URL"
-    },
-    // Add more sections here with placeholder text or leave blank to fill in later
-    {
-      title: "Johnstone University",
-      subtext: "Learning that Earns",
-      bigTitle: "Johnstone University",
-      body: "BODY_COPY",
-      buttonText: "Learn More",
-      link: "LINK_HERE",
-      image: "UNIVERSITY_IMAGE_URL"
-    },
-    {
-      title: "Industry Updates",
-      subtext: "A2L & SEER2 Resources",
-      bigTitle: "Industry Updates",
-      body: "BODY_COPY",
-      buttonText: "Explore",
-      link: "LINK_HERE",
-      image: "INDUSTRY_UPDATES_IMAGE_URL"
-    },
-    {
-      title: "About Us",
-      subtext: "Discover the Johnstone Difference",
-      bigTitle: "About Us",
-      body: "BODY_COPY",
-      buttonText: "Read More",
-      link: "LINK_HERE",
-      image: "ABOUT_IMAGE_URL"
-    },
-    {
-      title: "Tools of the Trade",
-      subtext: "Find the right system, everytime",
-      bigTitle: "Tools of the Trade",
-      body: "BODY_COPY",
-      buttonText: "Explore Tools",
-      link: "LINK_HERE",
-      image: "TOOLS_IMAGE_URL"
-    },
-    {
-      title: "Contractor Tools",
-      subtext: "Tools to make your job easier",
-      bigTitle: "Contractor Tools",
-      body: "BODY_COPY",
-      buttonText: "Visit Page",
-      link: "LINK_HERE",
-      image: "CONTRACTOR_TOOLS_IMAGE_URL"
-    },
-    {
-      title: "Careers",
-      subtext: "Build Your Future at Johnstone",
-      bigTitle: "Careers",
-      body: "BODY_COPY",
-      buttonText: "See Careers",
-      link: "LINK_HERE",
-      image: "CAREERS_IMAGE_URL"
-    },
-    {
-      title: "Trainings & Events",
-      subtext: "See what we have in store",
-      bigTitle: "Trainings & Events",
-      body: "BODY_COPY",
-      buttonText: "View Events",
-      link: "LINK_HERE",
-      image: "TRAINING_IMAGE_URL"
-    },
-  ];
+  <script>
+    const sections = [
+      {
+        title: "Promotions",
+        subtext: "See our monthly promotions",
+        mainTitle: "Promotions",
+        body: "Want to see what we have on sale for the month? Click the button below to join contests, giveaways, and see what Johnstone Supply has in store!",
+        buttonText: "See Promotions",
+        link: "https://www.johnstonesupply.com/promotions",
+        image: "PROMOTIONS_IMAGE_URL"
+      },
+      {
+        title: "Authorized Buyers",
+        subtext: "Keep your account secure",
+        mainTitle: "Update Your Authorized Buyers",
+        body: "Making an authorized buyers list ensures that when a purchase is made, it's made by a trusted team member. Click this button to update your list.",
+        buttonText: "Visit Page",
+        link: "https://www.johnstonesupply.com/store652/authorized-buyers-page",
+        image: "AUTHORIZED_BUYERS_IMAGE_URL"
+      },
+      {
+        title: "Johnstone University",
+        subtext: "Learning that Earns",
+        mainTitle: "Johnstone University",
+        body: "Access training, certification, and growth opportunities through Johnstone University.",
+        buttonText: "Explore University",
+        link: "https://www.johnstonesupply.com/johnstone-university",
+        image: "UNIVERSITY_IMAGE_URL"
+      },
+      {
+        title: "Industry Updates",
+        subtext: "A2L & SEER2 Resources",
+        mainTitle: "Industry Updates",
+        body: "Stay informed with the latest regulations, standards, and best practices in HVAC.",
+        buttonText: "Read More",
+        link: "https://www.johnstonesupply.com/industry-updates",
+        image: "INDUSTRY_IMAGE_URL"
+      },
+      {
+        title: "About Us",
+        subtext: "Discover the Johnstone Difference",
+        mainTitle: "About Johnstone Supply",
+        body: "Learn about our history, values, and commitment to serving HVAC professionals nationwide.",
+        buttonText: "Our Story",
+        link: "https://www.johnstonesupply.com/about",
+        image: "ABOUT_IMAGE_URL"
+      },
+      {
+        title: "Tools of the Trade",
+        subtext: "Find the right system, everytime",
+        mainTitle: "Tools of the Trade",
+        body: "From diagnosis to installation, see how we support you with the tools you need.",
+        buttonText: "Browse Tools",
+        link: "https://www.johnstonesupply.com/tools",
+        image: "TOOLS_IMAGE_URL"
+      },
+      {
+        title: "Contractor Tools",
+        subtext: "Tools to make your job easier",
+        mainTitle: "Contractor Tools",
+        body: "Boost productivity with calculators, checklists, and digital resources.",
+        buttonText: "View Tools",
+        link: "https://www.johnstonesupply.com/contractor-tools",
+        image: "CONTRACTOR_IMAGE_URL"
+      },
+      {
+        title: "Careers",
+        subtext: "Build Your Future at Johnstone",
+        mainTitle: "Careers at Johnstone",
+        body: "Join our team and grow your career with one of the HVAC industry's leaders.",
+        buttonText: "See Opportunities",
+        link: "https://www.johnstonesupply.com/careers",
+        image: "CAREERS_IMAGE_URL"
+      },
+      {
+        title: "Trainings & Events",
+        subtext: "See what we have in store",
+        mainTitle: "Upcoming Trainings & Events",
+        body: "Check out our calendar of trainings and events to stay ahead in the HVAC field.",
+        buttonText: "View Events",
+        link: "https://www.johnstonesupply.com/events",
+        image: "EVENTS_IMAGE_URL"
+      }
+    ];
 
-  let current = 0;
-  const sidebar = document.getElementById('sidebar');
-  const content = document.getElementById('content');
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
 
-  function loadSidebar() {
-    sidebar.innerHTML = '';
-    sections.forEach((s, i) => {
-      const div = document.createElement('div');
-      div.className = 'sidebar-item' + (i === current ? ' active' : '');
-      div.innerHTML = `<strong>${s.title}</strong><br><span class="sidebar-subtext">${s.subtext}</span>`;
-      div.onclick = () => {
-        current = i;
-        updateContent();
-      };
-      sidebar.appendChild(div);
-    });
-  }
+    let activeIndex = 0;
+    let autoRotate;
 
-  function updateContent() {
-    loadSidebar();
-    const s = sections[current];
-    content.innerHTML = `
-      <div class="text-section">
-        <h2>${s.bigTitle}</h2>
-        <p>${s.body}</p>
-        <a href="${s.link}" target="_blank">${s.buttonText}</a>
-      </div>
-      <div class="image-section">
-        <img src="${s.image}" alt="${s.bigTitle}">
-      </div>
-    `;
-  }
+    function renderSidebar() {
+      sidebar.innerHTML = "";
+      sections.forEach((sec, i) => {
+        const item = document.createElement("div");
+        item.className = `nav-item ${i === activeIndex ? "active" : ""}`;
+        item.innerHTML = `<div class="title">${sec.title}</div><div class="subtext">${sec.subtext}</div>`;
+        item.addEventListener("click", () => {
+          activeIndex = i;
+          render();
+          resetAutoRotate();
+        });
+        sidebar.appendChild(item);
+      });
+    }
 
-  setInterval(() => {
-    current = (current + 1) % sections.length;
-    updateContent();
-  }, 5000);
+    function renderContent() {
+      const sec = sections[activeIndex];
+      content.classList.remove("active");
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="text-section">
+            <h2>${sec.mainTitle}</h2>
+            <p>${sec.body}</p>
+            <a href="${sec.link}" class="button" target="_blank">${sec.buttonText}</a>
+          </div>
+          <div class="image-section">
+            <img src="${sec.image}" alt="${sec.mainTitle}" />
+          </div>
+        `;
+        content.classList.add("active");
+      }, 200);
+    }
 
-  updateContent();
-</script>
+    function render() {
+      renderSidebar();
+      renderContent();
+    }
+
+    function resetAutoRotate() {
+      clearInterval(autoRotate);
+      autoRotate = setInterval(() => {
+        activeIndex = (activeIndex + 1) % sections.length;
+        render();
+      }, 5000);
+    }
+
+    render();
+    resetAutoRotate();
+  </script>
 </body>
 </html>
